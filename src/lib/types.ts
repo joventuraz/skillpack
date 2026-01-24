@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// Supported agents for skill installation
+export const SUPPORTED_AGENTS = ['claude-code', 'cursor', 'antigravity'] as const;
+export type SupportedAgent = typeof SUPPORTED_AGENTS[number];
+
 // Schema for individual skill entry in config
 // Can be:
 // - "all" (install all skills from repo)
