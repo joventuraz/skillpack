@@ -1,0 +1,23 @@
+# skillpack.yaml - Package manager for skills.sh
+# Run `skillpack install` to install all skills below
+
+# Target agents to install skills to
+agents:
+  - claude-code
+  # - cursor
+
+# Skills to install (owner/repo format)
+skills:
+  # Install specific skills from a repo
+  vercel-labs/agent-skills:
+    - vercel-react-best-practices
+    - web-design-guidelines
+
+  # Install all skills from a repo
+  # another-org/repo: all
+
+  # Pin to a specific git ref (tag, branch, or commit)
+  # pinned-org/skill-repo:
+  #   ref: v1.0.0
+  #   skills:
+  #     - specific-skill
