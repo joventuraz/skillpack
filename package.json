@@ -1,54 +1,58 @@
 {
-  "name": "skillpack",
-  "version": "0.1.0",
-  "description": "Package manager for skills.sh - batch install skills to AI agents",
-  "type": "module",
-  "bin": {
-    "skillpack": "./dist/cli.js"
-  },
-  "main": "./dist/cli.js",
-  "files": [
-    "dist",
-    "templates"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joventuraz/skillpack.git"
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "node dist/cli.js",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": [
-    "skills",
-    "ai",
-    "claude",
-    "cursor",
-    "antigravity",
-    "package-manager",
-    "cli"
-  ],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "chalk": "^5.3.0",
-    "commander": "^12.1.0",
-    "execa": "^9.5.2",
-    "ora": "^8.1.1",
-    "yaml": "^2.7.0",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.7",
-    "typescript": "^5.7.3",
-    "vitest": "^4.0.18"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+	"name": "skillpack",
+	"version": "0.1.0",
+	"description": "Package manager for skills.sh - batch install skills to AI agents",
+	"type": "module",
+	"bin": {
+		"skillpack": "./dist/cli.js"
+	},
+	"main": "./dist/cli.js",
+	"files": [
+		"dist",
+		"templates"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/joventuraz/skillpack.git"
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"start": "node dist/cli.js",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"prepublishOnly": "npm run build",
+		"format": "biome format --write .",
+		"lint": "biome check --write .",
+		"lint:check": "biome ci ."
+	},
+	"keywords": [
+		"skills",
+		"ai",
+		"claude",
+		"cursor",
+		"antigravity",
+		"package-manager",
+		"cli"
+	],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"chalk": "^5.3.0",
+		"commander": "^12.1.0",
+		"execa": "^9.5.2",
+		"ora": "^8.1.1",
+		"yaml": "^2.7.0",
+		"zod": "^3.24.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.12",
+		"@types/node": "^22.10.7",
+		"typescript": "^5.7.3",
+		"vitest": "^4.0.18"
+	},
+	"engines": {
+		"node": ">=18"
+	}
 }

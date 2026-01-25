@@ -2,10 +2,36 @@
 # Run `skillpack install` to install all skills below
 
 # Target agents to install skills to
+# Supported: amp, antigravity, claude-code, clawdbot, cline, codex, command-code,
+#            cursor, droid, gemini-cli, github-copilot, goose, kilo, kiro-cli,
+#            mcpjam, neovate, opencode, openhands, pi, qoder, qwen-code, roo,
+#            trae, windsurf, zencoder
 agents:
   - claude-code
-  - antigravity
+  # - amp
+  # - antigravity
+  # - clawdbot
+  # - cline
+  # - codex
+  # - command-code
   # - cursor
+  # - droid
+  # - gemini-cli
+  # - github-copilot
+  # - goose
+  # - kilo
+  # - kiro-cli
+  # - mcpjam
+  # - neovate
+  # - opencode
+  # - openhands
+  # - pi
+  # - qoder
+  # - qwen-code
+  # - roo
+  # - trae
+  # - windsurf
+  # - zencoder
 
 # Skills to install (owner/repo format)
 skills:

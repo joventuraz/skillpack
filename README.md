@@ -50,7 +50,7 @@ skillpack install
 # Target agents to install skills to
 agents:
   - claude-code
-  - antigravity
+  - github-copilot
   - cursor
 
 # Skills to install (owner/repo format)
@@ -72,11 +72,35 @@ skills:
 
 ### Supported Agents
 
+Skillpack supports all 25 agents from [skills.sh](https://skills.sh):
+
 | Agent | Local Skills Dir | Global Skills Dir |
 |-------|------------------|-------------------|
-| `claude-code` | `.claude/skills/` | `~/.claude/skills/` |
+| `amp` | `.agents/skills/` | `~/.config/agents/skills/` |
 | `antigravity` | `.agent/skills/` | `~/.gemini/antigravity/skills/` |
+| `claude-code` | `.claude/skills/` | `~/.claude/skills/` |
+| `clawdbot` | `skills/` | `~/.clawdbot/skills/` |
+| `cline` | `.cline/skills/` | `~/.cline/skills/` |
+| `codex` | `.codex/skills/` | `~/.codex/skills/` |
+| `command-code` | `.commandcode/skills/` | `~/.commandcode/skills/` |
 | `cursor` | `.cursor/skills/` | `~/.cursor/skills/` |
+| `droid` | `.factory/skills/` | `~/.factory/skills/` |
+| `gemini-cli` | `.gemini/skills/` | `~/.gemini/skills/` |
+| `github-copilot` | `.github/skills/` | `~/.copilot/skills/` |
+| `goose` | `.goose/skills/` | `~/.config/goose/skills/` |
+| `kilo` | `.kilocode/skills/` | `~/.kilocode/skills/` |
+| `kiro-cli` | `.kiro/skills/` | `~/.kiro/skills/` |
+| `mcpjam` | `.mcpjam/skills/` | `~/.mcpjam/skills/` |
+| `neovate` | `.neovate/skills/` | `~/.neovate/skills/` |
+| `opencode` | `.opencode/skills/` | `~/.config/opencode/skills/` |
+| `openhands` | `.openhands/skills/` | `~/.openhands/skills/` |
+| `pi` | `.pi/skills/` | `~/.pi/agent/skills/` |
+| `qoder` | `.qoder/skills/` | `~/.qoder/skills/` |
+| `qwen-code` | `.qwen/skills/` | `~/.qwen/skills/` |
+| `roo` | `.roo/skills/` | `~/.roo/skills/` |
+| `trae` | `.trae/skills/` | `~/.trae/skills/` |
+| `windsurf` | `.windsurf/skills/` | `~/.codeium/windsurf/skills/` |
+| `zencoder` | `.zencoder/skills/` | `~/.zencoder/skills/` |
 
 Skills are installed by the underlying `npx skills add` command from [skills.sh](https://skills.sh).
 
