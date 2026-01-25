@@ -42,6 +42,7 @@ function getDefaultTemplate(): string {
 # Target agents to install skills to
 agents:
   - claude-code
+  - antigravity
   # - cursor
 
 # Skills to install (owner/repo format)

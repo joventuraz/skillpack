@@ -27,6 +27,7 @@ skillpack init
 ```yaml
 agents:
   - claude-code
+  - antigravity
   - cursor
 
 skills:
@@ -49,6 +50,7 @@ skillpack install
 # Target agents to install skills to
 agents:
   - claude-code
+  - antigravity
   - cursor
 
 # Skills to install (owner/repo format)
@@ -67,6 +69,16 @@ skills:
     skills:
       - specific-skill
 ```
+
+### Supported Agents
+
+| Agent | Local Skills Dir | Global Skills Dir |
+|-------|------------------|-------------------|
+| `claude-code` | `.claude/skills/` | `~/.claude/skills/` |
+| `antigravity` | `.agent/skills/` | `~/.gemini/antigravity/skills/` |
+| `cursor` | `.cursor/skills/` | `~/.cursor/skills/` |
+
+Skills are installed by the underlying `npx skills add` command from [skills.sh](https://skills.sh).
 
 ### Lockfile
 
