@@ -47,11 +47,14 @@ skillpack install
 ### skillpack.yaml
 
 ```yaml
-# Target agents to install skills to
-agents:
-  - claude-code
-  - github-copilot
-  - cursor
+# Install skills to global folders (default: false)
+# global: true
+
+# Target agents to install skills to (defaults to all agents if omitted)
+# agents:
+#   - claude-code
+#   - github-copilot
+#   - cursor
 
 # Skills to install (owner/repo format)
 skills:
@@ -123,6 +126,7 @@ Running `skillpack install` creates a `skillpack-lock.yaml` file that tracks ins
 --verbose       # Detailed output
 --config <path> # Custom config file path
 --no-lock       # Ignore lockfile and install latest
+-g, --global    # Install skills to global folders
 ```
 
 ## Examples

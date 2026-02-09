@@ -40,14 +40,18 @@ export async function installCommand(options: InstallOptions): Promise<void> {
 		process.exit(1);
 	}
 
+	// Merge global: CLI -g flag OR config global: true
+	const isGlobal = options.global || config.global;
+
 	const skillsToInstall = parseSkillsToInstall(config);
 	if (skillsToInstall.length === 0) {
 		logger.warn("No skills defined in skillpack.yaml");
 		return;
 	}
 
+	const resolvedAgents = skillsToInstall[0]?.agents ?? config.agents;
 	logger.info(
-		`Found ${skillsToInstall.length} skill source(s) for agents: ${config.agents.join(", ")}`,
+		`Found ${skillsToInstall.length} skill source(s) for agents: ${resolvedAgents.join(", ")}`,
 	);
 
 	// 3. Load lockfile (unless --no-lock)
@@ -93,6 +97,7 @@ export async function installCommand(options: InstallOptions): Promise<void> {
 		const results = await installSkillEntry(skill, {
 			dryRun: options.dryRun,
 			verbose: options.verbose,
+			global: isGlobal,
 		});
 
 		allResults.push(...results);

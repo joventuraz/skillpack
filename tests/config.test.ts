@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { SkillpackConfigSchema } from "../src/lib/types.js";
+import { parseSkillsToInstall } from "../src/lib/config.js";
+import {
+	SUPPORTED_AGENTS,
+	SkillpackConfigSchema,
+} from "../src/lib/types.js";
 
 describe("SkillpackConfigSchema", () => {
 	it("parses valid config with array of skills", () => {
@@ -47,14 +51,15 @@ describe("SkillpackConfigSchema", () => {
 		});
 	});
 
-	it("rejects config without agents", () => {
+	it("defaults agents to ['*'] when omitted", () => {
 		const config = {
 			skills: {
 				"org/repo": ["skill1"],
 			},
 		};
 
-		expect(() => SkillpackConfigSchema.parse(config)).toThrow();
+		const result = SkillpackConfigSchema.parse(config);
+		expect(result.agents).toEqual(["*"]);
 	});
 
 	it("rejects config with empty agents array", () => {
@@ -68,11 +73,61 @@ describe("SkillpackConfigSchema", () => {
 		expect(() => SkillpackConfigSchema.parse(config)).toThrow();
 	});
 
+	it("defaults global to false when omitted", () => {
+		const config = {
+			agents: ["claude-code"],
+			skills: {
+				"org/repo": ["skill1"],
+			},
+		};
+
+		const result = SkillpackConfigSchema.parse(config);
+		expect(result.global).toBe(false);
+	});
+
+	it("parses global: true from config", () => {
+		const config = {
+			agents: ["claude-code"],
+			global: true,
+			skills: {
+				"org/repo": ["skill1"],
+			},
+		};
+
+		const result = SkillpackConfigSchema.parse(config);
+		expect(result.global).toBe(true);
+	});
+
 	it("rejects config without skills", () => {
 		const config = {
 			agents: ["claude-code"],
 		};
 
 		expect(() => SkillpackConfigSchema.parse(config)).toThrow();
+	});
+});
+
+describe("parseSkillsToInstall", () => {
+	it("expands '*' agents to all supported agents", () => {
+		const config = SkillpackConfigSchema.parse({
+			skills: {
+				"org/repo": "all",
+			},
+		});
+
+		const skills = parseSkillsToInstall(config);
+		expect(skills[0].agents).toEqual([...SUPPORTED_AGENTS]);
+	});
+
+	it("preserves explicitly listed agents", () => {
+		const config = SkillpackConfigSchema.parse({
+			agents: ["claude-code", "cursor"],
+			skills: {
+				"org/repo": "all",
+			},
+		});
+
+		const skills = parseSkillsToInstall(config);
+		expect(skills[0].agents).toEqual(["claude-code", "cursor"]);
 	});
 });

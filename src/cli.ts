@@ -21,6 +21,7 @@ program
 	.option("--verbose", "Detailed output", false)
 	.option("--config <path>", "Custom config file path")
 	.option("--no-lock", "Ignore lockfile and install latest")
+	.option("-g, --global", "Install skills to global folders", false)
 	.action(async (opts) => {
 		const options: InstallOptions = {
 			dryRun: opts.dryRun,
@@ -28,6 +29,7 @@ program
 			verbose: opts.verbose,
 			config: opts.config,
 			noLock: !opts.lock, // commander converts --no-lock to lock: false
+			global: opts.global,
 		};
 		await installCommand(options);
 	});

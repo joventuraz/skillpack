@@ -1,37 +1,17 @@
 # skillpack.yaml - Package manager for skills.sh
 # Run `skillpack install` to install all skills below
 
-# Target agents to install skills to
+# Install skills to global folders (e.g. ~/.claude/skills/ instead of .claude/skills/)
+# global: true
+
+# Target agents to install skills to (defaults to all agents if omitted)
 # Supported: amp, antigravity, claude-code, clawdbot, cline, codex, command-code,
 #            cursor, droid, gemini-cli, github-copilot, goose, kilo, kiro-cli,
 #            mcpjam, neovate, opencode, openhands, pi, qoder, qwen-code, roo,
 #            trae, windsurf, zencoder
-agents:
-  - claude-code
-  # - amp
-  # - antigravity
-  # - clawdbot
-  # - cline
-  # - codex
-  # - command-code
-  # - cursor
-  # - droid
-  # - gemini-cli
-  # - github-copilot
-  # - goose
-  # - kilo
-  # - kiro-cli
-  # - mcpjam
-  # - neovate
-  # - opencode
-  # - openhands
-  # - pi
-  # - qoder
-  # - qwen-code
-  # - roo
-  # - trae
-  # - windsurf
-  # - zencoder
+# agents:
+#   - claude-code
+#   - cursor
 
 # Skills to install (owner/repo format)
 skills:

@@ -62,4 +62,40 @@ describe("buildSkillsCommand", () => {
 
 		expect(args).toContain("-y");
 	});
+
+	it("includes -g flag when global option is true", () => {
+		const args = buildSkillsCommand(
+			{
+				repo: "org/repo",
+				skills: ["skill1"],
+				agents: ["claude-code"],
+			},
+			{ global: true },
+		);
+
+		expect(args).toContain("-g");
+	});
+
+	it("does not include -g flag when global option is false", () => {
+		const args = buildSkillsCommand(
+			{
+				repo: "org/repo",
+				skills: ["skill1"],
+				agents: ["claude-code"],
+			},
+			{ global: false },
+		);
+
+		expect(args).not.toContain("-g");
+	});
+
+	it("does not include -g flag when options are omitted", () => {
+		const args = buildSkillsCommand({
+			repo: "org/repo",
+			skills: ["skill1"],
+			agents: ["claude-code"],
+		});
+
+		expect(args).not.toContain("-g");
+	});
 });

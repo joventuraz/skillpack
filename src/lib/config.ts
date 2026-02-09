@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { ZodError } from "zod";
 import {
+	SUPPORTED_AGENTS,
 	type SkillEntry,
 	type SkillpackConfig,
 	SkillpackConfigSchema,
@@ -74,11 +75,13 @@ export function parseSkillsToInstall(
 ): SkillToInstall[] {
 	const result: SkillToInstall[] = [];
 
+	const agents = resolveAgents(config.agents);
+
 	for (const [repo, entry] of Object.entries(config.skills)) {
 		const item: SkillToInstall = {
 			repo,
 			skills: resolveSkillsList(entry),
-			agents: config.agents,
+			agents,
 		};
 
 		// Extract ref if present
@@ -90,6 +93,13 @@ export function parseSkillsToInstall(
 	}
 
 	return result;
+}
+
+function resolveAgents(agents: string[]): string[] {
+	if (agents.includes("*")) {
+		return [...SUPPORTED_AGENTS];
+	}
+	return agents;
 }
 
 function resolveSkillsList(entry: SkillEntry): string[] | "all" {
