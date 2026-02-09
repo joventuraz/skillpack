@@ -1,6 +1,6 @@
 {
 	"name": "skillpack",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Package manager for skills.sh - batch install skills to AI agents",
 	"type": "module",
 	"bin": {
