@@ -1,5 +1,11 @@
-import { describe, expect, it } from "vitest";
-import { parseSkillsToInstall } from "../src/lib/config.js";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+	findConfigPath,
+	isValidRepoFormat,
+	parseSkillsToInstall,
+} from "../src/lib/config.js";
 import { SkillpackConfigSchema, SUPPORTED_AGENTS } from "../src/lib/types.js";
 
 describe("SkillpackConfigSchema", () => {
@@ -143,5 +149,120 @@ describe("parseSkillsToInstall", () => {
 		expect(skills[0].repo).toBe("valid/repo");
 		expect(skills[1].repo).toBe("also-valid/repo2");
 		expect(invalidRepos).toEqual(["invalid!!repo"]);
+	});
+
+	it("returns empty invalidRepos when all repos are valid", () => {
+		const config = SkillpackConfigSchema.parse({
+			agents: ["claude-code"],
+			skills: {
+				"org/repo": ["skill1"],
+			},
+		});
+
+		const { invalidRepos } = parseSkillsToInstall(config);
+		expect(invalidRepos).toEqual([]);
+	});
+
+	it("extracts ref from pinned skill entries", () => {
+		const config = SkillpackConfigSchema.parse({
+			agents: ["claude-code"],
+			skills: {
+				"pinned/repo": {
+					ref: "v2.0.0",
+					skills: ["my-skill"],
+				},
+			},
+		});
+
+		const { skills } = parseSkillsToInstall(config);
+		expect(skills[0].ref).toBe("v2.0.0");
+		expect(skills[0].skills).toEqual(["my-skill"]);
+	});
+
+	it("does not set ref when not specified", () => {
+		const config = SkillpackConfigSchema.parse({
+			agents: ["claude-code"],
+			skills: {
+				"org/repo": ["skill1"],
+			},
+		});
+
+		const { skills } = parseSkillsToInstall(config);
+		expect(skills[0].ref).toBeUndefined();
+	});
+});
+
+describe("isValidRepoFormat", () => {
+	it("accepts valid owner/repo format", () => {
+		expect(isValidRepoFormat("org/repo")).toBe(true);
+	});
+
+	it("accepts hyphens in owner and repo", () => {
+		expect(isValidRepoFormat("my-org/my-repo")).toBe(true);
+	});
+
+	it("accepts underscores in owner and repo", () => {
+		expect(isValidRepoFormat("my_org/my_repo")).toBe(true);
+	});
+
+	it("rejects repo without owner", () => {
+		expect(isValidRepoFormat("repo")).toBe(false);
+	});
+
+	it("rejects repo with special characters", () => {
+		expect(isValidRepoFormat("org!/repo")).toBe(false);
+		expect(isValidRepoFormat("org/repo!")).toBe(false);
+	});
+
+	it("rejects empty string", () => {
+		expect(isValidRepoFormat("")).toBe(false);
+	});
+
+	it("rejects repo with multiple slashes", () => {
+		expect(isValidRepoFormat("org/sub/repo")).toBe(false);
+	});
+});
+
+describe("findConfigPath", () => {
+	const tmpBase = join(process.cwd(), "tmp-test-findconfig");
+	const deepDir = join(tmpBase, "a", "b", "c");
+
+	beforeEach(() => {
+		mkdirSync(deepDir, { recursive: true });
+	});
+
+	afterEach(() => {
+		rmSync(tmpBase, { recursive: true, force: true });
+	});
+
+	it("finds config in the starting directory", () => {
+		writeFileSync(join(deepDir, "skillpack.yaml"), "skills: {}");
+		const result = findConfigPath(deepDir);
+		expect(result).toBe(join(deepDir, "skillpack.yaml"));
+	});
+
+	it("walks up multiple directories to find config", () => {
+		writeFileSync(join(tmpBase, "skillpack.yaml"), "skills: {}");
+		const result = findConfigPath(deepDir);
+		expect(result).toBe(join(tmpBase, "skillpack.yaml"));
+	});
+
+	it("finds config in an intermediate parent directory", () => {
+		const midDir = join(tmpBase, "a");
+		writeFileSync(join(midDir, "skillpack.yaml"), "skills: {}");
+		const result = findConfigPath(deepDir);
+		expect(result).toBe(join(midDir, "skillpack.yaml"));
+	});
+
+	it("returns null when no config exists", () => {
+		const result = findConfigPath(deepDir);
+		expect(result).toBeNull();
+	});
+
+	it("returns closest config when multiple exist", () => {
+		writeFileSync(join(tmpBase, "skillpack.yaml"), "skills: {}");
+		writeFileSync(join(tmpBase, "a", "b", "skillpack.yaml"), "skills: {}");
+		const result = findConfigPath(deepDir);
+		expect(result).toBe(join(tmpBase, "a", "b", "skillpack.yaml"));
 	});
 });
