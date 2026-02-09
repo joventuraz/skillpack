@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseSkillsToInstall } from "../src/lib/config.js";
-import {
-	SUPPORTED_AGENTS,
-	SkillpackConfigSchema,
-} from "../src/lib/types.js";
+import { SkillpackConfigSchema, SUPPORTED_AGENTS } from "../src/lib/types.js";
 
 describe("SkillpackConfigSchema", () => {
 	it("parses valid config with array of skills", () => {

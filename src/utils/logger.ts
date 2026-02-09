@@ -24,6 +24,7 @@ export const logger = {
 		if (installed > 0) parts.push(chalk.green(`${installed} installed`));
 		if (skipped > 0) parts.push(chalk.yellow(`${skipped} skipped`));
 		if (failed > 0) parts.push(chalk.red(`${failed} failed`));
+		if (parts.length === 0) parts.push(chalk.gray("nothing to install"));
 		console.log(`\n${chalk.bold("Summary:")}`, parts.join(", "));
 	},
 

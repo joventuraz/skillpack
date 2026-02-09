@@ -4,11 +4,11 @@ import { dirname, join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { ZodError } from "zod";
 import {
-	SUPPORTED_AGENTS,
 	type SkillEntry,
 	type SkillpackConfig,
 	SkillpackConfigSchema,
 	type SkillToInstall,
+	SUPPORTED_AGENTS,
 } from "./types.js";
 
 const CONFIG_FILENAME = "skillpack.yaml";
@@ -20,20 +20,18 @@ export function findConfigPath(
 	startDir: string = process.cwd(),
 ): string | null {
 	let dir = resolve(startDir);
-	const root = dirname(dir);
 
-	while (dir !== root) {
+	while (true) {
 		const configPath = join(dir, CONFIG_FILENAME);
 		if (existsSync(configPath)) {
 			return configPath;
 		}
-		dir = dirname(dir);
-	}
-
-	// Check root as well
-	const rootConfig = join(root, CONFIG_FILENAME);
-	if (existsSync(rootConfig)) {
-		return rootConfig;
+		const parent = dirname(dir);
+		if (parent === dir) {
+			// Reached filesystem root
+			break;
+		}
+		dir = parent;
 	}
 
 	return null;
@@ -78,6 +76,12 @@ export function parseSkillsToInstall(
 	const agents = resolveAgents(config.agents);
 
 	for (const [repo, entry] of Object.entries(config.skills)) {
+		if (!isValidRepoFormat(repo)) {
+			throw new Error(
+				`Invalid repo format: "${repo}". Expected "owner/repo" format.`,
+			);
+		}
+
 		const item: SkillToInstall = {
 			repo,
 			skills: resolveSkillsList(entry),
