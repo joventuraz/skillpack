@@ -20,8 +20,9 @@ export function findConfigPath(
 	startDir: string = process.cwd(),
 ): string | null {
 	let dir = resolve(startDir);
+	const MAX_DEPTH = 256;
 
-	while (true) {
+	for (let depth = 0; depth < MAX_DEPTH; depth++) {
 		const configPath = join(dir, CONFIG_FILENAME);
 		if (existsSync(configPath)) {
 			return configPath;
