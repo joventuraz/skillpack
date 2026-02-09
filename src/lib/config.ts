@@ -69,18 +69,19 @@ export async function loadConfig(configPath: string): Promise<SkillpackConfig> {
 /**
  * Transform config into normalized list of skills to install
  */
-export function parseSkillsToInstall(
-	config: SkillpackConfig,
-): SkillToInstall[] {
-	const result: SkillToInstall[] = [];
+export function parseSkillsToInstall(config: SkillpackConfig): {
+	skills: SkillToInstall[];
+	invalidRepos: string[];
+} {
+	const skills: SkillToInstall[] = [];
+	const invalidRepos: string[] = [];
 
 	const agents = resolveAgents(config.agents);
 
 	for (const [repo, entry] of Object.entries(config.skills)) {
 		if (!isValidRepoFormat(repo)) {
-			throw new Error(
-				`Invalid repo format: "${repo}". Expected "owner/repo" format.`,
-			);
+			invalidRepos.push(repo);
+			continue;
 		}
 
 		const item: SkillToInstall = {
@@ -94,10 +95,10 @@ export function parseSkillsToInstall(
 			item.ref = entry.ref;
 		}
 
-		result.push(item);
+		skills.push(item);
 	}
 
-	return result;
+	return { skills, invalidRepos };
 }
 
 function resolveAgents(agents: string[]): string[] {

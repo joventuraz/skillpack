@@ -112,7 +112,7 @@ describe("parseSkillsToInstall", () => {
 			},
 		});
 
-		const skills = parseSkillsToInstall(config);
+		const { skills } = parseSkillsToInstall(config);
 		expect(skills[0].agents).toEqual([...SUPPORTED_AGENTS]);
 	});
 
@@ -124,7 +124,24 @@ describe("parseSkillsToInstall", () => {
 			},
 		});
 
-		const skills = parseSkillsToInstall(config);
+		const { skills } = parseSkillsToInstall(config);
 		expect(skills[0].agents).toEqual(["claude-code", "cursor"]);
+	});
+
+	it("skips invalid repos and reports them", () => {
+		const config = SkillpackConfigSchema.parse({
+			agents: ["claude-code"],
+			skills: {
+				"valid/repo": ["skill1"],
+				"invalid!!repo": ["skill2"],
+				"also-valid/repo2": ["skill3"],
+			},
+		});
+
+		const { skills, invalidRepos } = parseSkillsToInstall(config);
+		expect(skills).toHaveLength(2);
+		expect(skills[0].repo).toBe("valid/repo");
+		expect(skills[1].repo).toBe("also-valid/repo2");
+		expect(invalidRepos).toEqual(["invalid!!repo"]);
 	});
 });
