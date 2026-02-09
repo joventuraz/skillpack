@@ -38,7 +38,7 @@ function getDefaultTemplate(): string {
 	return `# skillpack.yaml - Package manager for skills.sh
 # Run \`skillpack install\` to install all skills below
 
-# Target agents to install skills to
+# Target agents to install skills to (at least one agent is required)
 # Supported: amp, antigravity, claude-code, clawdbot, cline, codex, command-code,
 #            cursor, droid, gemini-cli, github-copilot, goose, kilo, kiro-cli,
 #            mcpjam, neovate, opencode, openhands, pi, qoder, qwen-code, roo,

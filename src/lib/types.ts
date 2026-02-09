@@ -58,9 +58,14 @@ export type SkillEntry = z.infer<typeof SkillEntrySchema>;
 // Main skillpack.yaml schema
 export const SkillpackConfigSchema = z.object({
 	agents: z
-		.array(z.string())
-		.min(1, "At least one agent must be specified")
-		.default(["*"]),
+		.array(z.string(), {
+			required_error:
+				"'agents' is required in skillpack.yaml. Add at least one agent, e.g.:\n  agents:\n    - claude-code",
+		})
+		.min(
+			1,
+			"At least one agent must be specified in skillpack.yaml, e.g.:\n  agents:\n    - claude-code",
+		),
 	global: z.boolean().default(false),
 	skills: z.record(z.string(), SkillEntrySchema),
 });

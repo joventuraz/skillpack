@@ -54,15 +54,16 @@ describe("SkillpackConfigSchema", () => {
 		});
 	});
 
-	it("defaults agents to ['*'] when omitted", () => {
+	it("rejects config when agents is omitted", () => {
 		const config = {
 			skills: {
 				"org/repo": ["skill1"],
 			},
 		};
 
-		const result = SkillpackConfigSchema.parse(config);
-		expect(result.agents).toEqual(["*"]);
+		expect(() => SkillpackConfigSchema.parse(config)).toThrow(
+			"agents",
+		);
 	});
 
 	it("rejects config with empty agents array", () => {
@@ -113,6 +114,7 @@ describe("SkillpackConfigSchema", () => {
 describe("parseSkillsToInstall", () => {
 	it("expands '*' agents to all supported agents", () => {
 		const config = SkillpackConfigSchema.parse({
+			agents: ["*"],
 			skills: {
 				"org/repo": "all",
 			},
