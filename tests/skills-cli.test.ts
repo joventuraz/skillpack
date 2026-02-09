@@ -62,4 +62,74 @@ describe("buildSkillsCommand", () => {
 
 		expect(args).toContain("-y");
 	});
+
+	it("includes -g flag when global option is true", () => {
+		const args = buildSkillsCommand(
+			{
+				repo: "org/repo",
+				skills: ["skill1"],
+				agents: ["claude-code"],
+			},
+			{ global: true },
+		);
+
+		expect(args).toContain("-g");
+	});
+
+	it("does not include -g flag when global option is false", () => {
+		const args = buildSkillsCommand(
+			{
+				repo: "org/repo",
+				skills: ["skill1"],
+				agents: ["claude-code"],
+			},
+			{ global: false },
+		);
+
+		expect(args).not.toContain("-g");
+	});
+
+	it("does not include -g flag when options are omitted", () => {
+		const args = buildSkillsCommand({
+			repo: "org/repo",
+			skills: ["skill1"],
+			agents: ["claude-code"],
+		});
+
+		expect(args).not.toContain("-g");
+	});
+
+	it("appends @ref to repo when ref is specified", () => {
+		const args = buildSkillsCommand({
+			repo: "org/repo",
+			skills: ["skill1"],
+			agents: ["claude-code"],
+			ref: "v1.0.0",
+		});
+
+		expect(args).toContain("org/repo@v1.0.0");
+		expect(args).not.toContain("org/repo");
+	});
+
+	it("uses plain repo when ref is not specified", () => {
+		const args = buildSkillsCommand({
+			repo: "org/repo",
+			skills: ["skill1"],
+			agents: ["claude-code"],
+		});
+
+		expect(args).toContain("org/repo");
+		expect(args).not.toContain("org/repo@");
+	});
+
+	it("appends @ref with commit SHA", () => {
+		const args = buildSkillsCommand({
+			repo: "org/repo",
+			skills: "all",
+			agents: ["claude-code"],
+			ref: "abc123def",
+		});
+
+		expect(args[2]).toBe("org/repo@abc123def");
+	});
 });

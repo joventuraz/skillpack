@@ -40,15 +40,38 @@ export async function installCommand(options: InstallOptions): Promise<void> {
 		process.exit(1);
 	}
 
-	const skillsToInstall = parseSkillsToInstall(config);
-	if (skillsToInstall.length === 0) {
+	// Merge global: CLI -g flag OR config global: true
+	const isGlobal = options.global || config.global;
+
+	const { skills: skillsToInstall, invalidRepos } =
+		parseSkillsToInstall(config);
+
+	const allResults: InstallResult[] = [];
+
+	// Report invalid repos but continue with valid ones
+	for (const repo of invalidRepos) {
+		logger.error(
+			`Invalid repo format: "${repo}". Expected "owner/repo" format, skipping.`,
+		);
+		allResults.push({
+			repo,
+			skill: "unknown",
+			status: "failed",
+			message: "invalid repo format",
+		});
+	}
+
+	if (skillsToInstall.length === 0 && invalidRepos.length === 0) {
 		logger.warn("No skills defined in skillpack.yaml");
 		return;
 	}
 
-	logger.info(
-		`Found ${skillsToInstall.length} skill source(s) for agents: ${config.agents.join(", ")}`,
-	);
+	const resolvedAgents = skillsToInstall[0]?.agents ?? config.agents;
+	if (skillsToInstall.length > 0) {
+		logger.info(
+			`Found ${skillsToInstall.length} skill source(s) for agents: ${resolvedAgents.join(", ")}`,
+		);
+	}
 
 	// 3. Load lockfile (unless --no-lock)
 	const lockfilePath = getLockfilePath(configPath);
@@ -61,7 +84,6 @@ export async function installCommand(options: InstallOptions): Promise<void> {
 	}
 
 	// 4. Install each skill
-	const allResults: InstallResult[] = [];
 	let newLockfile = lockfile || createLockfile();
 
 	for (const skill of skillsToInstall) {
@@ -93,6 +115,7 @@ export async function installCommand(options: InstallOptions): Promise<void> {
 		const results = await installSkillEntry(skill, {
 			dryRun: options.dryRun,
 			verbose: options.verbose,
+			global: isGlobal,
 		});
 
 		allResults.push(...results);
