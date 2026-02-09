@@ -7,13 +7,22 @@ const MAX_RETRIES = 1;
 interface SkillsAddOptions {
 	dryRun: boolean;
 	verbose: boolean;
+	global: boolean;
 }
 
 /**
  * Build the npx skills add command arguments
  */
-export function buildSkillsCommand(skill: SkillToInstall): string[] {
+export function buildSkillsCommand(
+	skill: SkillToInstall,
+	options?: { global?: boolean },
+): string[] {
 	const args = ["skills", "add", skill.repo, "-y"];
+
+	// Add global flag
+	if (options?.global) {
+		args.push("-g");
+	}
 
 	// Add agents
 	for (const agent of skill.agents) {
@@ -44,6 +53,11 @@ export async function installSkill(
 
 	// Build command for this specific skill or all
 	const baseArgs = ["skills", "add", repo, "-y"];
+
+	// Add global flag
+	if (options.global) {
+		baseArgs.push("-g");
+	}
 
 	// Add agents
 	for (const agent of skill.agents) {

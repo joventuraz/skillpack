@@ -57,7 +57,11 @@ export type SkillEntry = z.infer<typeof SkillEntrySchema>;
 
 // Main skillpack.yaml schema
 export const SkillpackConfigSchema = z.object({
-	agents: z.array(z.string()).min(1, "At least one agent must be specified"),
+	agents: z
+		.array(z.string())
+		.min(1, "At least one agent must be specified")
+		.default(["*"]),
+	global: z.boolean().default(false),
 	skills: z.record(z.string(), SkillEntrySchema),
 });
 
@@ -103,6 +107,7 @@ export interface InstallOptions {
 	verbose: boolean;
 	config: string;
 	noLock: boolean;
+	global: boolean;
 }
 
 export interface InitOptions {
