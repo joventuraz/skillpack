@@ -17,7 +17,8 @@ export function buildSkillsCommand(
 	skill: SkillToInstall,
 	options?: { global?: boolean },
 ): string[] {
-	const args = ["skills", "add", skill.repo, "-y"];
+	const repoArg = skill.ref ? `${skill.repo}@${skill.ref}` : skill.repo;
+	const args = ["skills", "add", repoArg, "-y"];
 
 	// Add global flag
 	if (options?.global) {
@@ -52,7 +53,8 @@ export async function installSkill(
 	const repo = skill.repo;
 
 	// Build command for this specific skill or all
-	const baseArgs = ["skills", "add", repo, "-y"];
+	const repoArg = skill.ref ? `${repo}@${skill.ref}` : repo;
+	const baseArgs = ["skills", "add", repoArg, "-y"];
 
 	// Add global flag
 	if (options.global) {

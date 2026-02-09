@@ -4,11 +4,11 @@ import { dirname, join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { ZodError } from "zod";
 import {
-	SUPPORTED_AGENTS,
 	type SkillEntry,
 	type SkillpackConfig,
 	SkillpackConfigSchema,
 	type SkillToInstall,
+	SUPPORTED_AGENTS,
 } from "./types.js";
 
 const CONFIG_FILENAME = "skillpack.yaml";
@@ -20,20 +20,19 @@ export function findConfigPath(
 	startDir: string = process.cwd(),
 ): string | null {
 	let dir = resolve(startDir);
-	const root = dirname(dir);
+	const MAX_DEPTH = 256;
 
-	while (dir !== root) {
+	for (let depth = 0; depth < MAX_DEPTH; depth++) {
 		const configPath = join(dir, CONFIG_FILENAME);
 		if (existsSync(configPath)) {
 			return configPath;
 		}
-		dir = dirname(dir);
-	}
-
-	// Check root as well
-	const rootConfig = join(root, CONFIG_FILENAME);
-	if (existsSync(rootConfig)) {
-		return rootConfig;
+		const parent = dirname(dir);
+		if (parent === dir) {
+			// Reached filesystem root
+			break;
+		}
+		dir = parent;
 	}
 
 	return null;
@@ -70,14 +69,21 @@ export async function loadConfig(configPath: string): Promise<SkillpackConfig> {
 /**
  * Transform config into normalized list of skills to install
  */
-export function parseSkillsToInstall(
-	config: SkillpackConfig,
-): SkillToInstall[] {
-	const result: SkillToInstall[] = [];
+export function parseSkillsToInstall(config: SkillpackConfig): {
+	skills: SkillToInstall[];
+	invalidRepos: string[];
+} {
+	const skills: SkillToInstall[] = [];
+	const invalidRepos: string[] = [];
 
 	const agents = resolveAgents(config.agents);
 
 	for (const [repo, entry] of Object.entries(config.skills)) {
+		if (!isValidRepoFormat(repo)) {
+			invalidRepos.push(repo);
+			continue;
+		}
+
 		const item: SkillToInstall = {
 			repo,
 			skills: resolveSkillsList(entry),
@@ -89,10 +95,10 @@ export function parseSkillsToInstall(
 			item.ref = entry.ref;
 		}
 
-		result.push(item);
+		skills.push(item);
 	}
 
-	return result;
+	return { skills, invalidRepos };
 }
 
 function resolveAgents(agents: string[]): string[] {

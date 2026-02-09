@@ -105,7 +105,7 @@ export interface InstallOptions {
 	dryRun: boolean;
 	force: boolean;
 	verbose: boolean;
-	config: string;
+	config?: string;
 	noLock: boolean;
 	global: boolean;
 }
